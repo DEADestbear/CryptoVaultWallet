@@ -35,7 +35,7 @@ export const createRecurringPayment = (amount, address, frequency) => {
 
     status:"active",
 
-    nextExecution:new Date().toLocaleString()
+  nextExecution: new Date().toLocaleString()
 
   };
 
