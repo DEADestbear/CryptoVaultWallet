@@ -62,9 +62,7 @@ export const cancelRecurringPayment = (id) => {
   const payment = recurringPayments.find(p => p.id === id);
 
   if(!payment){
-
     return {success:false, message:"Not found"};
-
   }
 
   payment.status="cancelled";
