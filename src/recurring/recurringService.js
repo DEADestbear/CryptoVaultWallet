@@ -18,14 +18,14 @@ const calculateNextExecution = (frequency) => {
   return nextDate.toLocaleString();
 };
 
-const logRecurringTransaction = (type, payment) => {
+const logRecurringTransaction = (type, payment, status) => {
   addTransaction({
     id: "rec-" + Math.random().toString(16).substring(2, 10),
     type,
     amount: payment.amount,
     address: payment.address,
     frequency: payment.frequency,
-    status: payment.status,
+    status,
     timestamp: new Date().toLocaleString()
   });
 };
@@ -66,7 +66,7 @@ export const createRecurringPayment = (amount, address, frequency) => {
 
   recurringPayments.push(recurring);
 
-  logRecurringTransaction("recurring-created", recurring);
+  logRecurringTransaction("recurring-created", recurring, "scheduled");
 
   return {
     success: true,
@@ -92,7 +92,7 @@ export const cancelRecurringPayment = (id) => {
   payment.status = "cancelled";
   payment.cancelledAt = new Date().toLocaleString();
 
-  logRecurringTransaction("recurring-cancelled", payment);
+  logRecurringTransaction("recurring-cancelled", payment, "cancelled");
 
   return { success: true, payment };
 };
