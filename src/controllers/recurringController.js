@@ -1,14 +1,18 @@
-import { 
-  createRecurringPayment,
-  getRecurringPayments,
-  cancelRecurringPayment
-} from "../recurring/recurringService.js";
-
 export const createRecurringController = (req, res) => {
+
   const { amount, address, frequency } = req.body;
 
+  if (!amount) {
+    return res.status(400).json({
+      success:false,
+      message:"Amount required"
+    });
+  }
+
+  const numericAmount = Number(amount);
+
   const result = createRecurringPayment(
-    Number(amount),
+    numericAmount,
     address,
     frequency
   );
@@ -17,21 +21,5 @@ export const createRecurringController = (req, res) => {
     res.json(result);
   } else {
     res.status(400).json(result);
-  }
-};
-
-export const getRecurringController = (req, res) => {
-  res.json(getRecurringPayments());
-};
-
-export const cancelRecurringController = (req, res) => {
-  const { id } = req.params;
-
-  const result = cancelRecurringPayment(id);
-
-  if (result.success) {
-    res.json(result);
-  } else {
-    res.status(404).json(result);
   }
 };
