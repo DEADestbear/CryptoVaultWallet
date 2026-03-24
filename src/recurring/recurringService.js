@@ -1,4 +1,4 @@
-import { getBalance } from "../transaction/transactionService.js";
+import { getBalance, addTransaction } from "../transaction/transactionService.js";
 
 let recurringPayments = [];
 
@@ -19,6 +19,7 @@ const calculateNextExecution = (frequency) => {
 };
 
 export const createRecurringPayment = (amount, address, frequency) => {
+
   if (!address || address.trim().length < 5) {
     return { success: false, message: "Invalid wallet address" };
   }
@@ -54,6 +55,17 @@ export const createRecurringPayment = (amount, address, frequency) => {
 
   recurringPayments.push(recurring);
 
+  // transaction history'e log ekleme (YENİ EKLENEN KISIM)
+  addTransaction({
+    id: "rec-" + Math.random().toString(16).substring(2, 10),
+    type: "recurring",
+    amount,
+    address: address.trim(),
+    frequency,
+    status: "scheduled",
+    timestamp: new Date().toLocaleString()
+  });
+
   return {
     success: true,
     recurring
@@ -65,6 +77,7 @@ export const getRecurringPayments = () => {
 };
 
 export const cancelRecurringPayment = (id) => {
+
   const payment = recurringPayments.find((p) => p.id === id);
 
   if (!payment) {
@@ -77,6 +90,17 @@ export const cancelRecurringPayment = (id) => {
 
   payment.status = "cancelled";
   payment.cancelledAt = new Date().toLocaleString();
+
+  // cancel edilince history'e log ekleme (YENİ EKLENEN KISIM)
+  addTransaction({
+    id: "can-" + Math.random().toString(16).substring(2, 10),
+    type: "recurring-cancel",
+    amount: payment.amount,
+    address: payment.address,
+    frequency: payment.frequency,
+    status: "cancelled",
+    timestamp: new Date().toLocaleString()
+  });
 
   return { success: true, payment };
 };
