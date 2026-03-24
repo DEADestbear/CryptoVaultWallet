@@ -1,266 +1,133 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<title>Recurring Payments</title>
-
-<style>
-
-body{
-
-font-family:Arial;
-background:#0f172a;
-color:white;
-padding:30px;
-
-}
-
-.card{
-
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-
-}
-
-input,select,button{
-
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:10px;
-border-radius:6px;
-border:none;
-
-}
-
-button{
-
-background:#3b82f6;
-color:white;
-cursor:pointer;
-
-}
-
-.payment{
-
-background:#334155;
-padding:15px;
-border-radius:8px;
-margin-top:10px;
-
-}
-
-</style>
-
+  <title>Recurring Payments</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select, button { margin: 10px 0; padding: 8px; width: 250px; }
+    .payment { border-bottom: 1px solid #ccc; padding: 10px 0; }
+  </style>
 </head>
-
 <body>
 
-<h1>Recurring Payments</h1>
+<h2>Recurring Payments</h2>
 
-<div class="card">
+<input id="address" placeholder="Recipient Address" />
+<br>
 
-<h2>Create Recurring Payment</h2>
-
-<form id="form">
-
-<input 
-id="amount"
-type="number"
-placeholder="Amount"
-required>
-
-<input 
-id="address"
-type="text"
-placeholder="Wallet address"
-required>
+<input id="amount" type="number" placeholder="Amount" />
+<br>
 
 <select id="frequency">
-
-<option value="">
-Frequency
-</option>
-
-<option value="daily">
-Daily
-</option>
-
-<option value="weekly">
-Weekly
-</option>
-
-<option value="monthly">
-Monthly
-</option>
-
+  <option value="">Select Frequency</option>
+  <option value="daily">Daily</option>
+  <option value="weekly">Weekly</option>
+  <option value="monthly">Monthly</option>
 </select>
+<br>
 
-<button>
-Create
-</button>
+<button onclick="createRecurring()">Create Recurring Payment</button>
 
-</form>
+<p id="status"></p>
 
-<p id="msg"></p>
+<hr>
 
-</div>
+<h3>Recurring Payment List</h3>
 
-<div class="card">
-
-<h2>Recurring List</h2>
+<button onclick="loadRecurring()">Load Recurring Payments</button>
 
 <div id="list"></div>
 
-</div>
-
 <script>
+async function createRecurring() {
+  const address = document.getElementById("address").value;
+  const amount = document.getElementById("amount").value;
+  const frequency = document.getElementById("frequency").value;
+  const status = document.getElementById("status");
 
-const API =
-"/api/transactions/recurring";
+  status.innerText = "Processing recurring payment...";
 
-const form =
-document.getElementById("form");
+  try {
+    const res = await fetch("/api/transactions/recurring", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ address, amount, frequency })
+    });
 
-const list =
-document.getElementById("list");
+    const data = await res.json();
 
-const msg =
-document.getElementById("msg");
+    if (res.ok) {
+      status.innerText = "Recurring payment created successfully";
+      loadRecurring();
+    } else {
+      status.innerText = data.message;
+    }
 
-const load = async()=>{
-
-const r =
-await fetch(API);
-
-const data =
-await r.json();
-
-if(!data.length){
-
-list.innerHTML =
-"No recurring payments";
-
-return;
-
+  } catch (err) {
+    status.innerText = "Error connecting to server";
+  }
 }
 
-list.innerHTML =
-data.map(p=>`
+async function loadRecurring() {
+  const list = document.getElementById("list");
 
-<div class="payment">
+  try {
+    const res = await fetch("/api/transactions/recurring");
+    const data = await res.json();
 
-<p>Amount:
-${p.amount}</p>
+    list.innerHTML = "";
 
-<p>Address:
-${p.address}</p>
+    if (data.length === 0) {
+      list.innerHTML = "<p>No recurring payments yet</p>";
+      return;
+    }
 
-<p>Frequency:
-${p.frequency}</p>
+    data.forEach(payment => {
+      const div = document.createElement("div");
+      div.className = "payment";
 
-<p>Status:
-${p.status}</p>
+      div.innerHTML = `
+        <strong>${payment.type}</strong><br>
+        Amount: ${payment.amount}<br>
+        To: ${payment.address}<br>
+        Frequency: ${payment.frequency}<br>
+        Status: ${payment.status}<br>
+        Next Execution: ${payment.nextExecution}<br>
+        <button onclick="cancelRecurring('${payment.id}')">Cancel</button>
+      `;
 
-<p>Next:
-${p.nextExecution}</p>
+      list.appendChild(div);
+    });
 
-<button
-onclick="
-cancel('${p.id}')
-">
-
-Cancel
-
-</button>
-
-</div>
-
-`).join("");
-
-};
-
-form.addEventListener(
-"submit",
-
-async(e)=>{
-
-e.preventDefault();
-
-const amount =
-document.getElementById("amount").value;
-
-const address =
-document.getElementById("address").value;
-
-const frequency =
-document.getElementById("frequency").value;
-
-const r =
-await fetch(API,{
-
-method:"POST",
-
-headers:{
-"Content-Type":
-"application/json"
-},
-
-body:JSON.stringify({
-
-amount,
-address,
-frequency
-
-})
-
-});
-
-const data =
-await r.json();
-
-msg.innerText =
-data.message ||
-"Created";
-
-form.reset();
-
-load();
-
-});
-
-window.cancel =
-async(id)=>{
-
-const r =
-await fetch(
-
-API+"/"+id,
-
-{
-method:"DELETE"
+  } catch (err) {
+    list.innerHTML = "<p>Error loading recurring payments</p>";
+  }
 }
 
-);
+async function cancelRecurring(id) {
+  const status = document.getElementById("status");
 
-const data =
-await r.json();
+  try {
+    const res = await fetch("/api/transactions/recurring/" + id, {
+      method: "DELETE"
+    });
 
-msg.innerText =
-data.message ||
-"Cancelled";
+    const data = await res.json();
 
-load();
+    if (res.ok) {
+      status.innerText = "Recurring payment cancelled";
+      loadRecurring();
+    } else {
+      status.innerText = data.message;
+    }
 
-};
-
-load();
-
+  } catch (err) {
+    status.innerText = "Error connecting to server";
+  }
+}
 </script>
 
 </body>
-
 </html>
