@@ -55,7 +55,7 @@ export const createRecurringPayment = (amount, address, frequency) => {
 
   recurringPayments.push(recurring);
 
-  // transaction history'e log ekleme (YENİ EKLENEN KISIM)
+
   addTransaction({
     id: "rec-" + Math.random().toString(16).substring(2, 10),
     type: "recurring",
@@ -91,7 +91,7 @@ export const cancelRecurringPayment = (id) => {
   payment.status = "cancelled";
   payment.cancelledAt = new Date().toLocaleString();
 
-  // cancel edilince history'e log ekleme (YENİ EKLENEN KISIM)
+
   addTransaction({
     id: "can-" + Math.random().toString(16).substring(2, 10),
     type: "recurring-cancel",
