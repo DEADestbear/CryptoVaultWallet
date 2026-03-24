@@ -1,1 +1,266 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+
+<title>Recurring Payments</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+background:#0f172a;
+color:white;
+padding:30px;
+
+}
+
+.card{
+
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+
+}
+
+input,select,button{
+
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:10px;
+border-radius:6px;
+border:none;
+
+}
+
+button{
+
+background:#3b82f6;
+color:white;
+cursor:pointer;
+
+}
+
+.payment{
+
+background:#334155;
+padding:15px;
+border-radius:8px;
+margin-top:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Recurring Payments</h1>
+
+<div class="card">
+
+<h2>Create Recurring Payment</h2>
+
+<form id="form">
+
+<input 
+id="amount"
+type="number"
+placeholder="Amount"
+required>
+
+<input 
+id="address"
+type="text"
+placeholder="Wallet address"
+required>
+
+<select id="frequency">
+
+<option value="">
+Frequency
+</option>
+
+<option value="daily">
+Daily
+</option>
+
+<option value="weekly">
+Weekly
+</option>
+
+<option value="monthly">
+Monthly
+</option>
+
+</select>
+
+<button>
+Create
+</button>
+
+</form>
+
+<p id="msg"></p>
+
+</div>
+
+<div class="card">
+
+<h2>Recurring List</h2>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+
+const API =
+"/api/transactions/recurring";
+
+const form =
+document.getElementById("form");
+
+const list =
+document.getElementById("list");
+
+const msg =
+document.getElementById("msg");
+
+const load = async()=>{
+
+const r =
+await fetch(API);
+
+const data =
+await r.json();
+
+if(!data.length){
+
+list.innerHTML =
+"No recurring payments";
+
+return;
+
+}
+
+list.innerHTML =
+data.map(p=>`
+
+<div class="payment">
+
+<p>Amount:
+${p.amount}</p>
+
+<p>Address:
+${p.address}</p>
+
+<p>Frequency:
+${p.frequency}</p>
+
+<p>Status:
+${p.status}</p>
+
+<p>Next:
+${p.nextExecution}</p>
+
+<button
+onclick="
+cancel('${p.id}')
+">
+
+Cancel
+
+</button>
+
+</div>
+
+`).join("");
+
+};
+
+form.addEventListener(
+"submit",
+
+async(e)=>{
+
+e.preventDefault();
+
+const amount =
+document.getElementById("amount").value;
+
+const address =
+document.getElementById("address").value;
+
+const frequency =
+document.getElementById("frequency").value;
+
+const r =
+await fetch(API,{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+
+amount,
+address,
+frequency
+
+})
+
+});
+
+const data =
+await r.json();
+
+msg.innerText =
+data.message ||
+"Created";
+
+form.reset();
+
+load();
+
+});
+
+window.cancel =
+async(id)=>{
+
+const r =
+await fetch(
+
+API+"/"+id,
+
+{
+method:"DELETE"
+}
+
+);
+
+const data =
+await r.json();
+
+msg.innerText =
+data.message ||
+"Cancelled";
+
+load();
+
+};
+
+load();
+
+</script>
+
+</body>
+
+</html>
