@@ -1,8 +1,14 @@
 let balance = 500;
 let transactions = [];
+
 export const updateBalance = (amount) => {
   balance -= amount;
 };
+
+export const addTransaction = (tx) => {
+  transactions.push(tx);
+};
+
 export const sendCrypto = (amount, address) => {
   if (!address || address.length < 5) {
     return { success: false, message: "Invalid wallet address" };
@@ -39,4 +45,5 @@ export const sendCrypto = (amount, address) => {
 export const getTransactions = () => {
   return transactions;
 };
+
 export const getBalance = () => balance;
