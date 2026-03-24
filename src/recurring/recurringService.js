@@ -18,8 +18,19 @@ const calculateNextExecution = (frequency) => {
   return nextDate.toLocaleString();
 };
 
-export const createRecurringPayment = (amount, address, frequency) => {
+const logRecurringTransaction = (type, payment) => {
+  addTransaction({
+    id: "rec-" + Math.random().toString(16).substring(2, 10),
+    type,
+    amount: payment.amount,
+    address: payment.address,
+    frequency: payment.frequency,
+    status: payment.status,
+    timestamp: new Date().toLocaleString()
+  });
+};
 
+export const createRecurringPayment = (amount, address, frequency) => {
   if (!address || address.trim().length < 5) {
     return { success: false, message: "Invalid wallet address" };
   }
@@ -55,16 +66,7 @@ export const createRecurringPayment = (amount, address, frequency) => {
 
   recurringPayments.push(recurring);
 
-
-  addTransaction({
-    id: "rec-" + Math.random().toString(16).substring(2, 10),
-    type: "recurring",
-    amount,
-    address: address.trim(),
-    frequency,
-    status: "scheduled",
-    timestamp: new Date().toLocaleString()
-  });
+  logRecurringTransaction("recurring-created", recurring);
 
   return {
     success: true,
@@ -77,7 +79,6 @@ export const getRecurringPayments = () => {
 };
 
 export const cancelRecurringPayment = (id) => {
-
   const payment = recurringPayments.find((p) => p.id === id);
 
   if (!payment) {
@@ -91,16 +92,7 @@ export const cancelRecurringPayment = (id) => {
   payment.status = "cancelled";
   payment.cancelledAt = new Date().toLocaleString();
 
-
-  addTransaction({
-    id: "can-" + Math.random().toString(16).substring(2, 10),
-    type: "recurring-cancel",
-    amount: payment.amount,
-    address: payment.address,
-    frequency: payment.frequency,
-    status: "cancelled",
-    timestamp: new Date().toLocaleString()
-  });
+  logRecurringTransaction("recurring-cancelled", payment);
 
   return { success: true, payment };
 };
