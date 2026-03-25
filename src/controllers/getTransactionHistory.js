@@ -1,3 +1,8 @@
+import { getTransactions } from "../transaction/transactionService.js";
+
 export const getTransactionHistory = (req, res) => {
-  res.json(mockTransactions);
+  return res.json({
+    success: true,
+    transactions: getTransactions()
+  });
 };

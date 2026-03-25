@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 let balance = 500;
 let transactions = [];
 
@@ -6,34 +8,42 @@ export const updateBalance = (amount) => {
 };
 
 export const addTransaction = (tx) => {
+  if (
+    tx.status === "success" &&
+    (tx.type === "send" || tx.type === "recurring-execution")
+  ) {
+    balance -= tx.amount;
+  }
+
   transactions.push(tx);
 };
 
 export const sendCrypto = (amount, address) => {
-  if (!address || address.length < 5) {
+  const parsedAmount = Number(amount);
+  const trimmedAddress = address?.trim();
+
+  if (!trimmedAddress || trimmedAddress.length < 5) {
     return { success: false, message: "Invalid wallet address" };
   }
 
-  if (amount <= 0) {
+  if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
     return { success: false, message: "Amount must be greater than 0" };
   }
 
-  if (amount > balance) {
+  if (parsedAmount > balance) {
     return { success: false, message: "Insufficient funds" };
   }
 
-  balance -= amount;
-
   const tx = {
-    id: "0x" + Math.random().toString(16).substring(2, 10),
+    id: crypto.randomUUID(),
     type: "send",
-    amount,
-    address,
+    amount: parsedAmount,
+    address: trimmedAddress,
     status: "success",
-    timestamp: new Date().toLocaleString()
+    timestamp: new Date().toISOString()
   };
 
-  transactions.push(tx);
+  addTransaction(tx);
 
   return {
     success: true,
