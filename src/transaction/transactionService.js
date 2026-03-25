@@ -19,23 +19,26 @@ export const addTransaction = (tx) => {
 };
 
 export const sendCrypto = (amount, address) => {
-  if (!address || address.trim().length < 5) {
+  const parsedAmount = Number(amount);
+  const trimmedAddress = address?.trim();
+
+  if (!trimmedAddress || trimmedAddress.length < 5) {
     return { success: false, message: "Invalid wallet address" };
   }
 
-  if (!Number.isFinite(amount) || amount <= 0) {
+  if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
     return { success: false, message: "Amount must be greater than 0" };
   }
 
-  if (amount > balance) {
+  if (parsedAmount > balance) {
     return { success: false, message: "Insufficient funds" };
   }
 
   const tx = {
     id: crypto.randomUUID(),
     type: "send",
-    amount,
-    address: address.trim(),
+    amount: parsedAmount,
+    address: trimmedAddress,
     status: "success",
     timestamp: new Date().toISOString()
   };
