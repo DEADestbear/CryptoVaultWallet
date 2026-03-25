@@ -2,8 +2,7 @@ import {
   createRecurringPayment,
   getRecurringPayments,
   cancelRecurringPayment
-} from "../services/recurringService.js";
-
+} from "../recurring/recurringService.js";
 export const createRecurringController = (req, res) => {
   const { amount, address, frequency } = req.body;
 
