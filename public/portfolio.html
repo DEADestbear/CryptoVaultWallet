@@ -6,15 +6,17 @@
     <title>portfolio</title>
 </head>
 <body id = "portfolio">
-    <div id="price">nothing</div>
+    <div id="walletValue">Wallet Value: £0.00</div>
+
+    <div id="priceContainer">something is wrong</div>
     <div id="api"></div>
 
 
 </body>
 <script type="module">
-    import { fetchBitcoinPrice } from './coinPrices/coins.js';
+    import { fetchCoinPrice } from './coinPrices/coins.js';
     document.addEventListener('DOMContentLoaded', () => {
-        fetchBitcoinPrice();
+        fetchCoinPrice();
     });
 </script>
 </html>
