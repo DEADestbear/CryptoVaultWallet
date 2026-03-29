@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>portfolio</title>
 </head>
-<body id = "price">
-    
+<body id = "portfolio">
+    <div id="price">nothing</div>
+    <div id="api"></div>
+
+
+</body>
 <script type="module">
     import { fetchBitcoinPrice } from './coinPrices/coins.js';
     document.addEventListener('DOMContentLoaded', () => {
         fetchBitcoinPrice();
     });
 </script>
-</body>
 </html>
