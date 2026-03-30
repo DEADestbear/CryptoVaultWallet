@@ -1,0 +1,14 @@
+{
+  "name": "cryptovaultwallet",
+  "version": "1.0.0",
+  "description": "Software Engineering Year 2 Project, Group 35",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}
