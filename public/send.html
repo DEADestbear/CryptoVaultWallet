@@ -53,6 +53,31 @@ async function sendCrypto() {
     }
   }, 1500);
 }
+<script>
+async function sendCrypto() {
+  const address = document.getElementById("address").value;
+  const amount = parseFloat(document.getElementById("amount").value);
+
+  const res = await fetch("http://localhost:3000/api/transactions/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ amount, address })
+  });
+
+  const data = await res.json();
+
+  const msg = document.getElementById("message");
+
+  if (data.success) {
+    msg.innerText = "✅ Transaction successful!";
+    msg.className = "success";
+  } else {
+    msg.innerText = "❌ " + data.message;
+    msg.className = "error";
+  }
+}
 </script>
 
 </body>
