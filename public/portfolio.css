@@ -1,0 +1,93 @@
+/* Layout Basics */
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f4f7f6;
+}
+
+/* Fixed Top Bar */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: #121212;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Wide Sidebar */
+#priceContainer {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    width: 380px; /* Bigger size for better readability */
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-right: 1px solid #e0e0e0;
+    box-sizing: border-box;
+}
+
+/* Individual Coin Cards */
+.coin-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.coin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #48d1cc;
+}
+
+.coin-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.coin-logo {
+    width: 32px;
+    height: 32px;
+}
+
+.coin-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.coin-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.coin-price {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Trend Styling */
+.coin-trend {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.trend-up { color: #00b894; }
+.trend-down { color: #d63031; }
