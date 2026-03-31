@@ -2,22 +2,22 @@
 <html>
 <head>
   <title>Send Crypto</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    input, button { margin: 10px 0; padding: 8px; width: 250px; }
-  </style>
-</head>
-<body>
+  <link rel="stylesheet" href="/send.css">
 
-<h2>Send Crypto</h2>
+<div class="container">
+  <h2>Send Crypto</h2>
 
-<input id="address" placeholder="Recipient Address" />
-<br>
-<input id="amount" type="number" placeholder="Amount" />
-<br>
+  <label>Recipient Address</label>
+  <input type="text" id="address">
 
-<button onclick="sendCrypto()">Send</button>
+  <label>Amount</label>
+  <input type="number" id="amount">
 
+  <button onclick="sendCrypto()">Send</button>
+
+</div>
+  <p id="message"></p>
+</div>
 <p id="status"></p>
 
 <script>
